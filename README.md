@@ -20,8 +20,8 @@ The assignment supports the four requested hardcoded scenarios:
 - Negative decisions for debt and impossible applications
 - Automatic loan-period extension when the selected period cannot produce a valid amount
 - Frontend form with quick-fill buttons for the four provided personal codes
-- Input validation for amount and period constraints
-- 8 focused unit tests for the decision service
+- Input validation for personal code, amount, and period constraints
+- Service tests for decision logic and MVC tests for endpoint behavior
 
 ## Project Structure
 
@@ -36,7 +36,9 @@ inbank-decision-engine/
 │       │   ├── model/
 │       │   ├── registry/
 │       │   └── service/
-│       └── test/java/com/inbank/decision/service/
+│       └── test/java/com/inbank/decision/
+│           ├── controller/
+│           └── service/
 └── frontend/
     ├── index.html
     ├── app.js
@@ -87,7 +89,7 @@ Debt is treated as a normal supported decision scenario, not as an HTTP error:
 ### Validation and lookup errors
 
 - Unknown personal code: `404 Not Found`
-- Invalid request body: `400 Bad Request`
+- Invalid request body (including malformed personal code): `400 Bad Request`
 
 ## Decision Logic
 
@@ -107,10 +109,11 @@ The service applies the following flow:
 
 1. Look up the applicant in the mocked registry.
 2. If the applicant has debt, return a negative decision immediately.
-3. Calculate the largest approvable amount for the selected period.
-4. If that amount is below the minimum allowed output (`2000`), extend the period month by month until a valid amount is found or until `60` months is reached.
-5. Cap any positive result at `10000`.
-6. If no valid amount exists in the allowed period range, return a negative decision.
+3. Evaluate the requested input with the assignment formula (`score >= 1` means the requested amount is approvable).
+4. Calculate the largest approvable amount for the selected period.
+5. If that amount is below the minimum allowed output (`2000`), extend the period month by month until a valid amount is found or until `60` months is reached.
+6. Cap any positive result at `10000`.
+7. If no valid amount exists in the allowed period range, return a negative decision.
 
 ### Why the requested amount is not used directly
 
@@ -175,9 +178,14 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
+The frontend reads API base URL from:
+
+- `<meta name="api-base-url" ...>` in `index.html`
+- `window.__API_BASE_URL__` as an optional runtime override
+
 ## Testing
 
-The service test suite covers:
+The test suite covers:
 
 - Debt scenario returns a negative decision
 - Unknown personal code handling
@@ -186,3 +194,4 @@ The service test suite covers:
 - Amount cap at `10000`
 - Negative decisions when no valid amount exists
 - Output range validation
+- Controller status and payload checks for `200`, `400`, and `404`
