@@ -1,6 +1,6 @@
 # Inbank Loan Decision Engine
 
-A Spring Boot REST API and a small vanilla JavaScript frontend for evaluating loan applications against a mocked credit registry.
+A Spring Boot REST API and a React frontend for evaluating loan applications against a mocked credit registry.
 
 ## Scope
 
@@ -19,7 +19,7 @@ The assignment supports the four requested hardcoded scenarios:
 - Hardcoded credit registry for the required scenarios
 - Negative decisions for debt and impossible applications
 - Automatic loan-period extension when the selected period cannot produce a valid amount
-- Frontend form with quick-fill buttons for the four provided personal codes
+- React frontend with quick-fill buttons for the four provided personal codes
 - Input validation for personal code, amount, and period constraints
 - Service tests for decision logic and MVC tests for endpoint behavior
 
@@ -41,8 +41,9 @@ inbank-decision-engine/
 │           └── service/
 └── frontend/
     ├── index.html
-    ├── app.js
-    └── style.css
+    ├── package.json
+    ├── src/
+    └── vite.config.js
 ```
 
 ## API
@@ -128,7 +129,7 @@ The requested amount is part of the input, but the engine is designed to return 
 - I kept the mocked registry isolated in its own class so the hardcoded assignment data can later be replaced with a real external integration.
 - I treated debt as a normal negative decision because the task lists it as one of the supported business scenarios, not as an exceptional transport-level failure.
 - I returned both `approvedAmount` and `approvedPeriod` so the frontend can explain whether the engine stayed on the requested period or had to extend it.
-- I kept the frontend intentionally small and framework-free because the assignment only requires a working client, not a large frontend architecture.
+- I upgraded the frontend to React so form state, async request handling, and result rendering are easier to maintain and extend.
 - I replaced Mockito-based tests with a simple stub registry. That keeps the tests deterministic and avoids JDK-specific agent attachment issues on newer Java versions.
 
 ## One Thing I Would Improve About the Assignment
@@ -169,11 +170,12 @@ cd backend
 
 ### Run the frontend
 
-Serve the frontend from the `frontend` directory:
+Install frontend dependencies and start the Vite dev server:
 
 ```bash
 cd frontend
-python -m http.server 8000
+npm install
+npm run dev
 ```
 
 Then open `http://localhost:8000`.
@@ -186,6 +188,13 @@ The frontend reads API base URL from:
 The backend CORS allowlist is configured in `backend/src/main/resources/application.properties` with:
 
 - `app.cors.allowed-origins=http://localhost:8000`
+
+To create a production frontend build:
+
+```bash
+cd frontend
+npm run build
+```
 
 ## Testing
 
