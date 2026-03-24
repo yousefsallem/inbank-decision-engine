@@ -27,7 +27,7 @@ public class DecisionEngineService {
 
         // Evaluate requested input first using the assignment scoring formula.
         if (isAmountApprovable(creditModifier, loanAmount, loanPeriod)) {
-            int approvedAmount = Math.min(creditModifier * loanPeriod, MAX_AMOUNT);
+            int approvedAmount = Math.min(highestValidLoanAmount(creditModifier, loanPeriod), MAX_AMOUNT);
             return LoanDecision.positive(approvedAmount, loanPeriod);
         }
 
@@ -35,7 +35,7 @@ public class DecisionEngineService {
         // Rearranged: max approvable amount = modifier * period
         // The requested amount does not cap the result; the engine returns the best valid offer.
         for (int period = loanPeriod; period <= MAX_PERIOD; period++) {
-            int maxApprovable = creditModifier * period;
+            int maxApprovable = highestValidLoanAmount(creditModifier, period);
 
             if (maxApprovable >= MIN_AMOUNT) {
                 int approvedAmount = Math.min(maxApprovable, MAX_AMOUNT);
@@ -54,5 +54,9 @@ public class DecisionEngineService {
 
     private double calculateCreditScore(int creditModifier, int loanAmount, int loanPeriod) {
         return ((double) creditModifier / loanAmount) * loanPeriod;
+    }
+
+    private int highestValidLoanAmount(int creditModifier, int loanPeriod) {
+        return creditModifier * loanPeriod;
     }
 }
