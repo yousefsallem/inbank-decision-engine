@@ -183,6 +183,10 @@ The frontend reads API base URL from:
 - `<meta name="api-base-url" ...>` in `index.html`
 - `window.__API_BASE_URL__` as an optional runtime override
 
+The backend CORS allowlist is configured in `backend/src/main/resources/application.properties` with:
+
+- `app.cors.allowed-origins=http://localhost:8000`
+
 ## Testing
 
 The test suite covers:
