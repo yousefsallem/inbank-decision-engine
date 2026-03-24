@@ -1,4 +1,8 @@
-const API_URL = 'http://localhost:8080/api/decision';
+const configuredApiBase =
+    document.querySelector('meta[name="api-base-url"]')?.content?.trim()
+    || window.__API_BASE_URL__
+    || '';
+const API_URL = `${configuredApiBase.replace(/\/$/, '')}/api/decision`;
 
 const personalCodeInput = document.getElementById('personalCode');
 const loanAmountSlider  = document.getElementById('loanAmount');
@@ -34,11 +38,12 @@ document.querySelectorAll('.chip').forEach(chip => {
 });
 
 submitBtn.addEventListener('click', async () => {
+    clearResults();
+
     const personalCode = personalCodeInput.value.trim();
     if (!personalCode) { showError('Please enter a personal code.'); return; }
 
     setLoading(true);
-    clearResults();
 
     try {
         const response = await fetch(API_URL, {
@@ -51,10 +56,18 @@ submitBtn.addEventListener('click', async () => {
             }),
         });
 
-        const data = await response.json();
+        const payload = await response.text();
+        let data = {};
+        if (payload) {
+            try {
+                data = JSON.parse(payload);
+            } catch (_err) {
+                data = {};
+            }
+        }
 
         if (!response.ok) {
-            showError(data.message || 'An unexpected error occurred.');
+            showError(data.message || `Request failed with status ${response.status}.`);
             return;
         }
 
