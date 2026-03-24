@@ -147,15 +147,15 @@ Both interpretations are defensible. I would improve the assignment by adding tw
 ### Prerequisites
 
 - Java 17 or newer
-- Maven 3.9 or newer
 
-The Maven build enforces Java 17+.
+The build enforces Java 17+.
+The repository includes a Maven wrapper under `backend/`, so a separate Maven installation is not required.
 
 ### Run the backend
 
 ```bash
 cd backend
-mvn clean spring-boot:run
+./mvnw clean spring-boot:run
 ```
 
 The API runs at `http://localhost:8080`.
@@ -164,7 +164,7 @@ The API runs at `http://localhost:8080`.
 
 ```bash
 cd backend
-mvn test
+./mvnw test
 ```
 
 ### Run the frontend
