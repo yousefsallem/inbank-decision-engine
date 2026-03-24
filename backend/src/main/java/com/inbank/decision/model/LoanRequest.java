@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 public class LoanRequest {
 
     @NotBlank(message = "Personal code must not be blank")
+    @Pattern(regexp = "\\d{11}", message = "Personal code must contain exactly 11 digits")
     private String personalCode;
 
     @NotNull(message = "Loan amount is required")
