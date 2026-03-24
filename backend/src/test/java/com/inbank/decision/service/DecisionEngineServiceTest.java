@@ -48,6 +48,15 @@ class DecisionEngineServiceTest {
     }
 
     @Test
+    @DisplayName("requested amount scoring should be evaluated before max-offer calculation")
+    void evaluatesRequestedAmountFirst() {
+        LoanDecision result = serviceWithDefaults().evaluate("49002010976", 2000, 24);
+        assertThat(result.getDecision()).isEqualTo(LoanDecision.Decision.POSITIVE);
+        assertThat(result.getApprovedAmount()).isEqualTo(2400);
+        assertThat(result.getApprovedPeriod()).isEqualTo(24);
+    }
+
+    @Test
     @DisplayName("segment 1: should extend period when amount too low")
     void segment1_extendsPeriodWhenNeeded() {
         LoanDecision result = serviceWithDefaults().evaluate("49002010976", 4000, 12);

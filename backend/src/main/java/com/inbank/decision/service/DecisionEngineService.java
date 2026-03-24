@@ -25,6 +25,12 @@ public class DecisionEngineService {
             return LoanDecision.negative("Applicant has active debt. No loan can be approved.");
         }
 
+        // Evaluate requested input first using the assignment scoring formula.
+        if (isAmountApprovable(creditModifier, loanAmount, loanPeriod)) {
+            int approvedAmount = Math.min(creditModifier * loanPeriod, MAX_AMOUNT);
+            return LoanDecision.positive(approvedAmount, loanPeriod);
+        }
+
         // Formula: credit_score = (modifier / amount) * period
         // Rearranged: max approvable amount = modifier * period
         // The requested amount does not cap the result; the engine returns the best valid offer.
@@ -40,5 +46,13 @@ public class DecisionEngineService {
         return LoanDecision.negative(
                 "No suitable loan amount could be found within the allowed period range (12–60 months)."
         );
+    }
+
+    private boolean isAmountApprovable(int creditModifier, int loanAmount, int loanPeriod) {
+        return calculateCreditScore(creditModifier, loanAmount, loanPeriod) >= 1.0;
+    }
+
+    private double calculateCreditScore(int creditModifier, int loanAmount, int loanPeriod) {
+        return ((double) creditModifier / loanAmount) * loanPeriod;
     }
 }
