@@ -90,7 +90,7 @@ Debt is treated as a normal supported decision scenario, not as an HTTP error:
 ### Validation and lookup errors
 
 - Unknown personal code: `404 Not Found`
-- Invalid request body (including malformed personal code): `400 Bad Request`
+- Invalid request body, malformed JSON, or wrong field types: `400 Bad Request`
 
 ## Decision Logic
 
