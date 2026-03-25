@@ -95,6 +95,39 @@ class DecisionControllerTest {
                 .andExpect(jsonPath("$.message").value("Personal code not found in registry: 00000000000"));
     }
 
+    @Test
+    @DisplayName("should return 400 for malformed JSON")
+    void shouldReturnBadRequestForMalformedJson() throws Exception {
+        mockMvc.perform(post("/api/decision")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "personalCode": "49002010976",
+                                  "loanAmount": 4000,
+                                  "loanPeriod": 24
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_REQUEST_BODY"))
+                .andExpect(jsonPath("$.message").value("Request body is malformed or contains invalid field types."));
+    }
+
+    @Test
+    @DisplayName("should return 400 for invalid field types")
+    void shouldReturnBadRequestForInvalidFieldTypes() throws Exception {
+        mockMvc.perform(post("/api/decision")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "personalCode": "49002010976",
+                                  "loanAmount": "abc",
+                                  "loanPeriod": 24
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("INVALID_REQUEST_BODY"))
+                .andExpect(jsonPath("$.message").value("Request body is malformed or contains invalid field types."));
+    }
+
     private static final class StubDecisionEngineService extends DecisionEngineService {
         private LoanDecision response;
         private RuntimeException exception;
