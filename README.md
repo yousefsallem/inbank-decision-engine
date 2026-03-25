@@ -148,6 +148,7 @@ Both interpretations are defensible. I would improve the assignment by adding tw
 ### Prerequisites
 
 - Java 17 or newer
+- Node.js 18 or newer
 
 The build enforces Java 17+.
 The repository includes a Maven wrapper under `backend/`, so a separate Maven installation is not required.
@@ -180,7 +181,10 @@ npm run dev
 
 Then open `http://localhost:8000`.
 
-The frontend reads API base URL from:
+By default, the frontend calls `/api/decision`.
+During local development, Vite proxies `/api` requests from `http://localhost:8000` to the backend at `http://localhost:8080`.
+
+The frontend can also read an explicit API base URL from:
 
 - `<meta name="api-base-url" ...>` in `index.html`
 - `window.__API_BASE_URL__` as an optional runtime override

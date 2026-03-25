@@ -12,7 +12,9 @@ const configuredApiBase =
   window.__API_BASE_URL__ ||
   "";
 
-const API_URL = `${configuredApiBase.replace(/\/$/, "")}/api/decision`;
+const API_URL = configuredApiBase
+  ? `${configuredApiBase.replace(/\/$/, "")}/api/decision`
+  : "/api/decision";
 
 const formatCurrency = (value) => `€ ${Number(value).toLocaleString("en")}`;
 
