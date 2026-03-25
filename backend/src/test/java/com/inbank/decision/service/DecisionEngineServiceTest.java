@@ -1,5 +1,6 @@
 package com.inbank.decision.service;
 
+import com.inbank.decision.exception.InvalidLoanRequestException;
 import com.inbank.decision.exception.InvalidPersonalCodeException;
 import com.inbank.decision.model.LoanDecision;
 import com.inbank.decision.registry.CreditRegistry;
@@ -42,7 +43,7 @@ class DecisionEngineServiceTest {
     @DisplayName("should reject blank personal code for direct service calls")
     void shouldRejectBlankPersonalCode() {
         assertThatThrownBy(() -> serviceWithDefaults().evaluate("   ", 4000, 24))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(InvalidLoanRequestException.class)
                 .hasMessage("Personal code must not be blank.");
     }
 
@@ -50,7 +51,7 @@ class DecisionEngineServiceTest {
     @DisplayName("should reject out of range loan amount for direct service calls")
     void shouldRejectOutOfRangeLoanAmount() {
         assertThatThrownBy(() -> serviceWithDefaults().evaluate("49002010976", 0, 24))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(InvalidLoanRequestException.class)
                 .hasMessage("Loan amount must be between 2000 and 10000.");
     }
 
@@ -58,7 +59,7 @@ class DecisionEngineServiceTest {
     @DisplayName("should reject out of range loan period for direct service calls")
     void shouldRejectOutOfRangeLoanPeriod() {
         assertThatThrownBy(() -> serviceWithDefaults().evaluate("49002010976", 4000, 6))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(InvalidLoanRequestException.class)
                 .hasMessage("Loan period must be between 12 and 60 months.");
     }
 

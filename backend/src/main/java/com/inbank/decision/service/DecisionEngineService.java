@@ -1,5 +1,6 @@
 package com.inbank.decision.service;
 
+import com.inbank.decision.exception.InvalidLoanRequestException;
 import com.inbank.decision.model.LoanDecision;
 import com.inbank.decision.registry.CreditRegistry;
 import org.springframework.stereotype.Service;
@@ -65,13 +66,13 @@ public class DecisionEngineService {
 
     private void validateInputs(String personalCode, int loanAmount, int loanPeriod) {
         if (personalCode == null || personalCode.isBlank()) {
-            throw new IllegalArgumentException("Personal code must not be blank.");
+            throw new InvalidLoanRequestException("Personal code must not be blank.");
         }
         if (loanAmount < MIN_AMOUNT || loanAmount > MAX_AMOUNT) {
-            throw new IllegalArgumentException("Loan amount must be between 2000 and 10000.");
+            throw new InvalidLoanRequestException("Loan amount must be between 2000 and 10000.");
         }
         if (loanPeriod < MIN_PERIOD || loanPeriod > MAX_PERIOD) {
-            throw new IllegalArgumentException("Loan period must be between 12 and 60 months.");
+            throw new InvalidLoanRequestException("Loan period must be between 12 and 60 months.");
         }
     }
 }
