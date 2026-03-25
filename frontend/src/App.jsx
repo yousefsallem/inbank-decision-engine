@@ -72,7 +72,7 @@ export default function App() {
 
       setResult(data);
     } catch {
-      setError("Could not reach the backend. Make sure it is running on port 8080.");
+      setError(`Could not reach the backend at ${API_URL}. Make sure it is running and reachable.`);
     } finally {
       setLoading(false);
     }
