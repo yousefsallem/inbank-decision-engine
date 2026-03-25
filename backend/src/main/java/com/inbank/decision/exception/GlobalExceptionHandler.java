@@ -37,8 +37,8 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+    @ExceptionHandler(InvalidLoanRequestException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidLoanRequest(InvalidLoanRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "VALIDATION_ERROR", "message", ex.getMessage()));
     }

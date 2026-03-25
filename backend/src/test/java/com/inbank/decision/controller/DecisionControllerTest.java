@@ -1,6 +1,7 @@
 package com.inbank.decision.controller;
 
 import com.inbank.decision.exception.GlobalExceptionHandler;
+import com.inbank.decision.exception.InvalidLoanRequestException;
 import com.inbank.decision.exception.InvalidPersonalCodeException;
 import com.inbank.decision.model.LoanDecision;
 import com.inbank.decision.registry.CreditRegistry;
@@ -131,7 +132,7 @@ class DecisionControllerTest {
     @Test
     @DisplayName("should return 400 when service rejects invalid arguments")
     void shouldReturnBadRequestForServiceValidationError() throws Exception {
-        decisionEngineService.exception = new IllegalArgumentException("Loan amount must be between 2000 and 10000.");
+        decisionEngineService.exception = new InvalidLoanRequestException("Loan amount must be between 2000 and 10000.");
 
         mockMvc.perform(post("/api/decision")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,6 +146,25 @@ class DecisionControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.message").value("Loan amount must be between 2000 and 10000."));
+    }
+
+    @Test
+    @DisplayName("should return 500 for unrelated illegal arguments")
+    void shouldReturnInternalErrorForGenericIllegalArgument() throws Exception {
+        decisionEngineService.exception = new IllegalArgumentException("Unexpected internal argument failure.");
+
+        mockMvc.perform(post("/api/decision")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "personalCode": "49002010976",
+                                  "loanAmount": 4000,
+                                  "loanPeriod": 24
+                                }
+                                """))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("INTERNAL_ERROR"))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred."));
     }
 
     private static final class StubDecisionEngineService extends DecisionEngineService {
