@@ -128,6 +128,25 @@ class DecisionControllerTest {
                 .andExpect(jsonPath("$.message").value("Request body is malformed or contains invalid field types."));
     }
 
+    @Test
+    @DisplayName("should return 400 when service rejects invalid arguments")
+    void shouldReturnBadRequestForServiceValidationError() throws Exception {
+        decisionEngineService.exception = new IllegalArgumentException("Loan amount must be between 2000 and 10000.");
+
+        mockMvc.perform(post("/api/decision")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "personalCode": "49002010976",
+                                  "loanAmount": 4000,
+                                  "loanPeriod": 24
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Loan amount must be between 2000 and 10000."));
+    }
+
     private static final class StubDecisionEngineService extends DecisionEngineService {
         private LoanDecision response;
         private RuntimeException exception;
