@@ -39,6 +39,30 @@ class DecisionEngineServiceTest {
     }
 
     @Test
+    @DisplayName("should reject blank personal code for direct service calls")
+    void shouldRejectBlankPersonalCode() {
+        assertThatThrownBy(() -> serviceWithDefaults().evaluate("   ", 4000, 24))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Personal code must not be blank.");
+    }
+
+    @Test
+    @DisplayName("should reject out of range loan amount for direct service calls")
+    void shouldRejectOutOfRangeLoanAmount() {
+        assertThatThrownBy(() -> serviceWithDefaults().evaluate("49002010976", 0, 24))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Loan amount must be between 2000 and 10000.");
+    }
+
+    @Test
+    @DisplayName("should reject out of range loan period for direct service calls")
+    void shouldRejectOutOfRangeLoanPeriod() {
+        assertThatThrownBy(() -> serviceWithDefaults().evaluate("49002010976", 4000, 6))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Loan period must be between 12 and 60 months.");
+    }
+
+    @Test
     @DisplayName("segment 1: should approve max amount at requested period")
     void segment1_approvesAtRequestedPeriod() {
         LoanDecision result = serviceWithDefaults().evaluate("49002010976", 4000, 24);

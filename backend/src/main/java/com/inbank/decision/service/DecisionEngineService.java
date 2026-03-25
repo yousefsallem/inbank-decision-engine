@@ -9,6 +9,7 @@ public class DecisionEngineService {
 
     private static final int MIN_AMOUNT = 2000;
     private static final int MAX_AMOUNT = 10000;
+    private static final int MIN_PERIOD = 12;
     private static final int MAX_PERIOD = 60;
 
     private final CreditRegistry creditRegistry;
@@ -18,6 +19,8 @@ public class DecisionEngineService {
     }
 
     public LoanDecision evaluate(String personalCode, int loanAmount, int loanPeriod) {
+        validateInputs(personalCode, loanAmount, loanPeriod);
+
         // Throws InvalidPersonalCodeException if code is not found.
         int creditModifier = creditRegistry.getCreditModifier(personalCode);
 
@@ -58,5 +61,17 @@ public class DecisionEngineService {
 
     private int highestValidLoanAmount(int creditModifier, int loanPeriod) {
         return creditModifier * loanPeriod;
+    }
+
+    private void validateInputs(String personalCode, int loanAmount, int loanPeriod) {
+        if (personalCode == null || personalCode.isBlank()) {
+            throw new IllegalArgumentException("Personal code must not be blank.");
+        }
+        if (loanAmount < MIN_AMOUNT || loanAmount > MAX_AMOUNT) {
+            throw new IllegalArgumentException("Loan amount must be between 2000 and 10000.");
+        }
+        if (loanPeriod < MIN_PERIOD || loanPeriod > MAX_PERIOD) {
+            throw new IllegalArgumentException("Loan period must be between 12 and 60 months.");
+        }
     }
 }
